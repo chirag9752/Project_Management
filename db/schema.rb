@@ -10,33 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_11_135649) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_18_171218) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "assignments", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "project_id", null: false
+  create_table "features", force: :cascade do |t|
+    t.string "feature_name"
+    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["project_id"], name: "index_assignments_on_project_id"
-    t.index ["user_id"], name: "index_assignments_on_user_id"
   end
 
-  create_table "feature_toggles", force: :cascade do |t|
-    t.string "feature_name"
-    t.boolean "enabled"
+  create_table "jwt_denylists", force: :cascade do |t|
+    t.string "jti", null: false
+    t.datetime "exp", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
   end
 
   create_table "projects", force: :cascade do |t|
-    t.string "name"
+    t.string "project_name"
     t.decimal "billing_rate", precision: 10, scale: 2
-    t.bigint "users_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["users_id"], name: "index_projects_on_users_id"
+    t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
   create_table "time_sheets", force: :cascade do |t|
@@ -44,17 +43,33 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_11_135649) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_features", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "feature_id", null: false
+    t.index ["feature_id"], name: "index_user_features_on_feature_id"
+    t.index ["user_id"], name: "index_user_features_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email", null: false
     t.string "password"
     t.integer "role"
-    t.string "developer_type"
+    t.integer "employee_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "jwt_revocation_token"
+    t.string "encrypted_password"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.string "jti"
+    t.index ["jti"], name: "index_users_on_jti", unique: true
   end
 
-  add_foreign_key "assignments", "projects"
-  add_foreign_key "assignments", "users"
-  add_foreign_key "projects", "users", column: "users_id"
+  add_foreign_key "projects", "users"
+  add_foreign_key "user_features", "features"
+  add_foreign_key "user_features", "users"
 end

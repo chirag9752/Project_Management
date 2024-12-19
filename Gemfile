@@ -65,3 +65,12 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+
+
+# devise setup things 
+gem 'devise'                  # Flexible authentication solution
+gem 'devise-jwt'              # JWT token authentication for Devise
+gem 'rack-cors'               # Enables Cross-Origin Resource Sharing
+gem 'jsonapi-rails'     
+gem 'byebug', group: [:development, :test]
