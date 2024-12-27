@@ -15,6 +15,57 @@ class Users::RegistrationsController < Devise::RegistrationsController
       }, status: :unprocessable_entity
     end
   end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   # Override create method for custom user registration
   # def create
@@ -101,7 +152,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   end
   # end
 
-  private
+  # private
 
   # Strong parameters for sign up
   # def sign_up_params
@@ -142,4 +193,3 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #     resource.update_without_password(params)
   #   end
   # end
-end
