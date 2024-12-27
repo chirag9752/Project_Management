@@ -28,16 +28,27 @@ Devise.setup do |config|
 
   # JWT.specific configuration
 
+  # config.jwt do |jwt|
+  #   jwt.secret = Rails.application.credentials.secret_key_base
+  #   jwt.dispatch_requests = [
+  #     ['POST', %r{^/users/sign_in$}]
+  #   ]
+  #   jwt.revocation_requests = [
+  #     ['DELETE', %r{^/users/sign_out$}]
+  #   ]
+  #   jwt.expiration_time = 1.day.to_i
+  #   # jwt.revocation_strategy = JwtDenylist
+  # end
+
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.secret_key_base
+    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
     jwt.dispatch_requests = [
-      ['POST', %r{^/users/sign_in$}]
+      ['POST', %r{^/login$}]
     ]
     jwt.revocation_requests = [
-      ['DELETE', %r{^/users/sign_out$}]
+      ['DELETE', %r{^/logout$}]
     ]
     jwt.expiration_time = 1.day.to_i
-    # jwt.revocation_strategy = JwtDenylist
   end
 
   # Configure the class responsible to send e-mails.
@@ -73,6 +84,8 @@ Devise.setup do |config|
   # These keys will be downcased upon creating or modifying a user and when used
   # to authenticate or find a user. Default is :email.
   config.case_insensitive_keys = [:email]
+
+  config.navigational_formats = []
 
   # Configure which authentication keys should have whitespace stripped.
   # These keys will have whitespace before and after removed upon creating or

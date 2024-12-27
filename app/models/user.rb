@@ -1,14 +1,14 @@
 class User < ApplicationRecord
 
+  
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
-  devise :database_authenticatable,     # Encrypt passwords
-         :registerable,                 # Allow user registration
-         :recoverable,                  # Reset password functionality
-         :rememberable,                 # Remember user login
-         :validatable,                  # Email and password validations
-         :jwt_authenticatable,           # JWT authentication
-          jwt_revocation_strategy: self  # Revocation strategy
+  devise :database_authenticatable,
+          :registerable,
+          :recoverable,
+          :validatable,
+          :jwt_authenticatable,
+          jwt_revocation_strategy: self
 
     has_many :user_features
     has_many :features, through: :user_features
@@ -29,15 +29,16 @@ class User < ApplicationRecord
 
     def jwt_payload
       super.merge({
-        role: self.role
+        role: self.role,
+        name: self.name
       })
     end
 
-    def self.jwt_revoked?(payload, user)
-      user.jwt_revocation_token = payload['jti']
-    end
+    # def self.jwt_revoked?(payload, user)
+    #   user.jwt_revocation_token = payload['jti']
+    # end
 
-    def self.revoke_jwt(payload, user)
-      user.update_column(:jwt_revocation_token, payload['jti'])
-    end
+    # def self.revoke_jwt(payload, user)
+    #   user.update_column(:jwt_revocation_token, payload['jti'])
+    # end
 end

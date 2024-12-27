@@ -1,0 +1,1 @@
+FEATURES_CONFIG = JSON.parse(File.read(Rails.root.join("config/features.json")))

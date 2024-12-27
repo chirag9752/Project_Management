@@ -16,7 +16,7 @@ class UsersController < ApplicationController
   end
 
   private
-  
+
   def authorize_hr_for_role_update
     unless current_user.role == "HR"
       render json: { error: "You are not authorized to update roles" }, status: :forbidden

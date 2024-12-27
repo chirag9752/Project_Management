@@ -74,3 +74,4 @@ gem 'devise-jwt'              # JWT token authentication for Devise
 gem 'rack-cors'               # Enables Cross-Origin Resource Sharing
 gem 'jsonapi-rails'     
 gem 'byebug', group: [:development, :test]
+gem 'jsonapi-serializer'

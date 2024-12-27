@@ -33,10 +33,8 @@ Rails.application.routes.draw do
 
     # features
 
-    post 'users/:id/execute_feature', to: 'hr/features#execute'
-
-    namespace :hr do
-      post 'features/assign_feature', to: 'features#assign_feature'
-      delete 'features/remove_feature', to: 'features#remove_feature'
-    end
+    post 'users/execute_feature', to: 'hr/features#execute'
+    post 'users/checkinguserfeature', to: 'hr/features#checkinguserfeature'
+    get 'users/features/index', to: 'hr/features#index'
+    
 end

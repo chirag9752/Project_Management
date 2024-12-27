@@ -1,41 +1,54 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  # Respond to JSON requests
+  
+  include RackSessionsFix
   respond_to :json
 
-  # Override create method for custom user registration
-  def create
-    # Build resource from params
-    build_resource(sign_up_params)
-  
-    # Attempt to save the resource
-    if resource.save
-      # If save is successful
-
-      sign_in(resource_name, resource)
-
-      token = request.env['warden-jwt_auth.token']
-
+  def respond_with(current_user, _opts = {})
+    if resource.persisted?
       render json: {
-        status: { 
-          code: 201, 
-          message: 'Signed up successfully' 
-        },
-        data: {
-          user: resource,
-          # Optionally generate and return a token
-          token: token
-        }
-      }, status: :created
+        status: {code: 200, message: 'Signed up successfully.'},
+        data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+      }
     else
       render json: {
-        status: { 
-          code: 422, 
-          message: 'User could not be created successfully',
-          errors: resource.errors.full_messages
-        }
+        status: {message: "User couldn't be created successfully. #{current_user.errors.full_messages.to_sentence}"}
       }, status: :unprocessable_entity
     end
   end
+
+  # Override create method for custom user registration
+  # def create
+  #   # Build resource from params
+  #   build_resource(sign_up_params)
+  
+  #   # Attempt to save the resource
+  #   if resource.save
+  #     # If save is successful
+
+  #     sign_in(resource_name, resource)
+
+  #     token = request.env['warden-jwt_auth.token']
+
+  #     render json: {
+  #       status: { 
+  #         code: 201, 
+  #         message: 'Signed up successfully' 
+  #       },
+  #       data: {
+  #         user: resource,
+  #         token: token
+  #       }
+  #     }, status: :created
+  #   else
+  #     render json: {
+  #       status: { 
+  #         code: 422, 
+  #         message: 'User could not be created successfully',
+  #         errors: resource.errors.full_messages
+  #       }
+  #     }, status: :unprocessable_entity
+  #   end
+  # end
 
   # Override update method for profile updates
   # def update
@@ -91,9 +104,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   # Strong parameters for sign up
-  def sign_up_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :name, :role, :employee_type)
-  end
+  # def sign_up_params
+  #   params.require(:user).permit(:email, :password, :password_confirmation, :name, :role, :employee_type)
+  # end
 
   # Strong parameters for account update
   # def account_update_params
