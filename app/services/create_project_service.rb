@@ -5,7 +5,6 @@ class CreateProjectService
 
   def call
     project_params = extract_project_params
-
     if project_params
       project = Project.create!(project_params)
       if project.persisted?

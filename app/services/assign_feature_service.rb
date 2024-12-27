@@ -7,11 +7,9 @@ class AssignFeatureService
     @user = fetch_user
     @feature = fetch_feature
     if @user && @feature
-      # Check if the feature is already assigned
       if @user.features.exists?(@feature.id)
         { success: false, errors: 'Feature already assigned' }
       else
-        # Assign the feature to the user
         @user.features << @feature
         { success: true, message: 'Feature assigned successfully' }
       end
@@ -23,10 +21,10 @@ class AssignFeatureService
   private
 
   def fetch_user
-    user = User.find(@params[:assign_feature][:user_id])
+    user = User.find(@params.dig(:assign_feature, :user_id))
   end
 
   def fetch_feature
-    feature = Feature.find_by(feature_name: @params[:assign_feature][:feature_name])
+    feature = Feature.find_by(feature_name: @params.dig(:assign_feature, :feature_name))
   end
 end

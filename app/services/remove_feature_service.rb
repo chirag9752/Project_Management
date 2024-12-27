@@ -21,10 +21,10 @@ class RemoveFeatureService
   private
   
   def fetch_user
-    user = User.find(@params[:assign_feature][:user_id])
+    user = User.find(@params.dig(:assign_feature, :user_id))
   end
 
   def fetch_feature
-    feature = Feature.find_by(feature_name: @params[:assign_feature][:feature_name])
+    feature = Feature.find_by(feature_name: @params.dig(:assign_feature, :feature_name))
   end
 end
