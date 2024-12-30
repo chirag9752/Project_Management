@@ -11,7 +11,7 @@ class RemoveFeatureService
         UserFeature.delete_by(user_id: @user.id)
         { success: true, message: 'Feature removed successfully'}
       else
-        { success: false, message: "Feature is not assigned to user #{@user.name}" }
+        { success: false, errors: "Feature is not assigned to user #{@user.name}" }
       end
     else
       { success: false, errors: 'Invalid user or feature' }

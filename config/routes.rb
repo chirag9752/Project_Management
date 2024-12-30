@@ -34,7 +34,7 @@ Rails.application.routes.draw do
     # features
 
     post 'users/execute_feature', to: 'hr/features#execute'
-    post 'users/checkinguserfeature', to: 'hr/features#checkinguserfeature'
+    post 'users/checkinguserfeature', to: 'hr/features#checking_user_feature'
     get 'users/features/index', to: 'hr/features#index'
     
 end

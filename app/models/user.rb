@@ -1,6 +1,5 @@
 class User < ApplicationRecord
 
-  
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   devise :database_authenticatable,
@@ -30,7 +29,8 @@ class User < ApplicationRecord
     def jwt_payload
       super.merge({
         role: self.role,
-        name: self.name
+        name: self.name,
+        id: self.id,
       })
     end
 

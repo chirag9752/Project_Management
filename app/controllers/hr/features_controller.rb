@@ -1,7 +1,7 @@
 class Hr::FeaturesController < ApplicationController
 	before_action :check_feature_access, only: [:execute]
-  skip_before_action :verify_authenticity_token
-  before_action :authenticate_user!
+  skip_before_action :verify_authenticity_token                           # for desableing csrf 
+  before_action :authenticate_user!                                       # for checking weather user is authenticated or not 
 
   def index
     @feature = Feature.all
@@ -23,18 +23,34 @@ class Hr::FeaturesController < ApplicationController
       end
 	end
 
-  # return array of feature so that display only selected feature
-  def checkinguserfeature
-    @user = User.find(params[:userid]);
-    if current_user && current_user.id == @user.id
-      features = @user.features
-      render json: { allowed_features: features.map(&:feature_name) }
+  def checking_user_feature
+    result = check_user_features(params[:userid])
+  
+    if result[:status] == :ok
+      render json: result[:data], status: :ok
     else
-      render json: {error: "You are not authorized to access this request"}, status: :forbidden
+      render json: {error: result[:error]}, status: result[:status]
     end
   end
+  
 
 	private
+
+  def check_user_features(user_id)
+    user = User.find_by(id: user_id)
+
+    return {status: :not_found, error: "User not found" } if User.nil?
+
+    return {status: :forbidden, error: "You are not authorized to access this request"} unless current_user&.id == user.id
+
+    features = user.features
+
+    {
+      status: :ok,
+      data: {allowed_features: features.any? ? features.map(&:feature_name) : []}
+    }
+
+  end
 
   def call_features_services
     feature_name = params.dig(:featureknown, :feature_name)
