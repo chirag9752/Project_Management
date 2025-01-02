@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_18_171218) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_02_170522) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,13 +29,29 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_18_171218) do
     t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
   end
 
+  create_table "project_users", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.bigint "user_id", null: false
+    t.boolean "billing_access"
+    t.boolean "timesheet"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_project_users_on_project_id"
+    t.index ["user_id"], name: "index_project_users_on_user_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "project_name"
     t.decimal "billing_rate", precision: 10, scale: 2
-    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "projects_users", id: false, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "project_id", null: false
+    t.index ["project_id"], name: "index_projects_users_on_project_id"
+    t.index ["user_id"], name: "index_projects_users_on_user_id"
   end
 
   create_table "time_sheets", force: :cascade do |t|
@@ -69,7 +85,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_18_171218) do
     t.index ["jti"], name: "index_users_on_jti", unique: true
   end
 
-  add_foreign_key "projects", "users"
+  add_foreign_key "project_users", "projects"
+  add_foreign_key "project_users", "users"
   add_foreign_key "user_features", "features"
   add_foreign_key "user_features", "users"
 end
