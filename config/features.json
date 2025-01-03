@@ -1,5 +1,6 @@
 {
     "createproject": "CreateProjectService",
     "assignfeature": "AssignFeatureService",
-    "removefeature": "RemoveFeatureService"
+    "removefeature": "RemoveFeatureService",
+    "projects": "ProjectService"
 }

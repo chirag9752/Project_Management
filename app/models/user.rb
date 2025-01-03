@@ -11,7 +11,6 @@ class User < ApplicationRecord
 
     has_many :user_features
     has_many :features, through: :user_features
-    # has_and_belongs_to_many :projects
     has_many :project_users
     has_many :projects, through: :project_users
     has_many :time_sheets
