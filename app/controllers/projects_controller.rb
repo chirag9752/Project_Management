@@ -34,7 +34,9 @@ class ProjectsController < ApplicationController
             {
               user_id: project_user.user_id,
               billing_access: project_user.billing_access,
-              timesheet: project_user.timesheet 
+              timesheet: project_user.timesheet,
+              profile_id: project_user.profile_id,
+              profile_name: project_user.profile.profile_name,
             }
           end,
           users: @project.users.map do |user|

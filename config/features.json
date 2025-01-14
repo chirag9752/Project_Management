@@ -2,5 +2,6 @@
     "createproject": "CreateProjectService",
     "assignfeature": "AssignFeatureService",
     "removefeature": "RemoveFeatureService",
-    "projects": "ProjectService"
+    "projects": "ProjectService",
+    "timesheets": "TimesheetService"
 }

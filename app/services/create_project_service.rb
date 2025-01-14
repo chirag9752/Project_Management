@@ -16,11 +16,18 @@ class CreateProjectService
         user_List_map = user_List.index_by { |user| user["email"] }
         
         if list_of_users.any?
-
           list_of_users.each do |user|
-          timesheet = user_List_map[user.email]["timesheet"]
-          billing_access = user_List_map[user.email]["billing_access"]
-          project.project_users.build(user: user, timesheet: timesheet, billing_access: billing_access)
+            timesheet = user_List_map[user.email]["timesheet"]
+            billing_access = user_List_map[user.email]["billing_access"]
+            profile_name = user_List_map[user.email]["profile_name"]
+            profile = Profile.find_by(profile_name: profile_name)
+              if profile
+                profile_id = profile.id
+              else
+                new_profile = Profile.create!(profile_name: profile_name)
+                profile_id = new_profile.id
+              end
+            project.project_users.build(user: user, timesheet: timesheet, billing_access: billing_access, profile_id: profile_id)
           end
           project.save!
           if project.persisted?
@@ -42,7 +49,7 @@ class CreateProjectService
   private
 
   def extract_project_params
-    @params.require(:project).permit(:project_name, :billing_rate, user_List: [:email, :timesheet, :billing_access])
+    @params.require(:project).permit(:project_name, :billing_rate, user_List: [:email, :timesheet, :billing_access, :profile_name])
       rescue ActionController::ParameterMissing => e
         { success: false, errors: [e.message] }
   end

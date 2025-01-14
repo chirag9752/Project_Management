@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_02_170522) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_13_202804) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_02_170522) do
     t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
   end
 
+  create_table "profiles", force: :cascade do |t|
+    t.string "profile_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_name"], name: "index_profiles_on_profile_name"
+  end
+
   create_table "project_users", force: :cascade do |t|
     t.bigint "project_id", null: false
     t.bigint "user_id", null: false
@@ -36,6 +43,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_02_170522) do
     t.boolean "timesheet"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "profile_id"
     t.index ["project_id"], name: "index_project_users_on_project_id"
     t.index ["user_id"], name: "index_project_users_on_user_id"
   end
@@ -47,16 +55,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_02_170522) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "projects_users", id: false, force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "project_id", null: false
-    t.index ["project_id"], name: "index_projects_users_on_project_id"
-    t.index ["user_id"], name: "index_projects_users_on_user_id"
-  end
-
-  create_table "time_sheets", force: :cascade do |t|
+  create_table "timesheets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "total_hours", default: 0.0
+    t.string "status", default: "pending"
+    t.date "week_start_date", null: false
+    t.integer "year", default: 0, null: false
+    t.bigint "project_user_id"
+    t.jsonb "daily_hours", default: {}, null: false
+    t.text "description"
+    t.index ["project_user_id"], name: "index_timesheets_on_project_user_id"
   end
 
   create_table "user_features", force: :cascade do |t|
@@ -85,8 +94,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_02_170522) do
     t.index ["jti"], name: "index_users_on_jti", unique: true
   end
 
-  add_foreign_key "project_users", "projects"
+  add_foreign_key "project_users", "profiles"
+  add_foreign_key "project_users", "projects", on_delete: :cascade
   add_foreign_key "project_users", "users"
+  add_foreign_key "timesheets", "project_users"
   add_foreign_key "user_features", "features"
   add_foreign_key "user_features", "users"
 end

@@ -9,13 +9,13 @@ class User < ApplicationRecord
           :jwt_authenticatable,
           jwt_revocation_strategy: self
 
-    has_many :user_features
-    has_many :features, through: :user_features
-    has_many :project_users
-    has_many :projects, through: :project_users
-    has_many :time_sheets
+  has_many :user_features
+  has_many :features, through: :user_features
+  has_many :project_users
+  has_many :projects, through: :project_users
+  has_many :timesheets
 
-    enum role: {
+  enum role: {
        HR: 0,
        BD: 1,
        developer: 2

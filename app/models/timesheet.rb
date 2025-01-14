@@ -1,4 +1,3 @@
 class Timesheet < ApplicationRecord
-    belongs_to :user
-    belongs_to :project
+  belongs_to :project_user
 end

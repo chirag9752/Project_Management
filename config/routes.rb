@@ -12,21 +12,12 @@ Rails.application.routes.draw do
     },
     defaults: { format: :json } 
 
-    # config/routes.rb
-    # namespace :hr do
-    #   resources :features, only: [] do
-    #     post :assign_feature, on: :collection
-    #     delete :remove_feature, on: :collection
-    #   end
-    # end
-
-    # config/routes.rb
-
     get '/users', to: 'users#index'
     get '/users/:id', to: 'users#show'
     get '/users/details/:id', to: 'users#detailsshow'
 
-    # projects
+    # timesheet
+    post '/timesheets/fetchsingletimesheet', to: 'timesheets#fetch_single'
 
     # post '/projects', to: 'projects#create'
     get '/projects', to: 'projects#index'
@@ -37,5 +28,7 @@ Rails.application.routes.draw do
     post 'users/execute_feature', to: 'hr/features#execute'
     post 'users/checkinguserfeature', to: 'hr/features#checking_user_feature'
     get 'users/features/index', to: 'hr/features#index'
-    
+
+    # profiles 
+    get '/profiles', to: 'profiles#index' 
 end
