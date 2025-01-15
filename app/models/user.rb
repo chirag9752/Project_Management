@@ -13,7 +13,7 @@ class User < ApplicationRecord
   has_many :features, through: :user_features
   has_many :project_users
   has_many :projects, through: :project_users
-  has_many :timesheets
+  # has_many :timesheets
 
   enum role: {
        HR: 0,

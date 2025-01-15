@@ -33,7 +33,6 @@ class Hr::FeaturesController < ApplicationController
     end
   end
   
-
 	private
 
   def check_user_features(user_id)

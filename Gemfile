@@ -75,3 +75,15 @@ gem 'rack-cors'               # Enables Cross-Origin Resource Sharing
 gem 'jsonapi-rails'     
 gem 'byebug', group: [:development, :test]
 gem 'jsonapi-serializer'
+
+
+
+group :test do
+  gem 'rspec-rails', '~> 7.1'
+  gem 'factory_bot_rails'
+  gem 'shoulda-matchers', '~> 6.2'
+  gem 'faker', '~> 3.4', '>= 3.4.2'
+  gem 'simplecov', require: false
+  gem 'shoulda-context'
+  gem 'database_cleaner-active_record'
+end
