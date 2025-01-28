@@ -8,8 +8,8 @@ class RemoveFeatureService
     @feature = fetch_feature
     if @user && @feature
       if @user.features.exists?(@feature.id)
-        UserFeature.delete_by(user_id: @user.id)
-        { success: true, message: 'Feature removed successfully'}
+        UserFeature.delete_by(feature_id: @feature.id)
+        { success: true}
       else
         { success: false, errors: "Feature is not assigned to user #{@user.name}" }
       end

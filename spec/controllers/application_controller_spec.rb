@@ -1,11 +1,9 @@
-# spec/requests/application_controller_spec.rb
 require 'rails_helper'
 
 RSpec.describe 'ApplicationController', type: :request do
   describe 'CSRF protection' do
     context 'when sending a POST request without a CSRF token' do
       it 'returns a 403 Forbidden response' do
-        # Replace user_registration_path with the actual path you want to test
         post user_registration_path, params: { some_param: 'value' }
         expect(response).to have_http_status(:unprocessable_content)
       end

@@ -5,28 +5,15 @@ class Users::SessionsController < Devise::SessionsController
 
   def respond_with(current_user, _opts = {})
   token = request.env['warden-jwt_auth.token']
-    render json: {
-    status: {
-      token: token,
-      code: 200, message: 'Logged in successfully.',
-      data: { user: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
-     }
-    }
-  }, status: :ok
+    render json: {token: token, data: { user: UserSerializer.new(current_user).serializable_hash[:data][:attributes] } }, status: :ok
   end
 
   def respond_to_on_destroy
     current_user = check_current_user
     if current_user
-      render json: {
-        status: 200,
-        message: 'Logged out successfully.'
-      }, status: :ok
+      render json: {}, status: :ok
     else
-      render json: {
-        status: 401,
-        message: "Couldn't find an active session."
-      }, status: :unauthorized
+      render json: { status: 401, error: "Couldn't find an active session." }, status: :unauthorized
     end
   end
 

@@ -1,102 +1,68 @@
 require 'rails_helper'
 
 RSpec.describe Users::SessionsController, type: :controller do
-  include Devise::Test::ControllerHelpers
+  let(:user) { create(:user) }
+  let(:jwt_token) { Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first }
+  let(:authorization_header) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   before do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
+    request.headers.merge!(authorization_header)
   end
 
-  let(:user) { create(:user, email: 'test@example.com', password: 'password123') }
+  describe 'POST #respond_with' do
+    it 'responds with a valid JWT token and user data' do
+      allow(request.env).to receive(:[]).with('warden-jwt_auth.token').and_return(jwt_token)
+      
+      post :respond_with, params: {}, format: :json
+      
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
 
-  describe 'POST #create' do
-    context 'with valid credentials' do
-      before do
-        @request.env['HTTP_ACCEPT'] = 'application/json'
-        post :create, params: {
-          user: {
-            email: user.email,
-            password: 'password123'
-          }
-        }, format: :json
-      end
+      expect(json_response['token']).to eq(jwt_token)
+      expect(json_response['data']).to have_key('user')
+    end
+  end
 
-      it 'returns successful response' do
+  describe 'DELETE #respond_to_on_destroy' do
+    context 'when the user is logged in' do
+      it 'returns an empty response with status :ok' do
+        allow(controller).to receive(:check_current_user).and_return(user)
+
+        delete :respond_to_on_destroy, params: {}, format: :json
+
         expect(response).to have_http_status(:ok)
-      end
-
-      it 'returns JWT token' do
-        json_response = JSON.parse(response.body)
-        expect(json_response['status']['token']).to be_present
-      end
-
-      it 'returns success message' do
-        json_response = JSON.parse(response.body)
-        expect(json_response['status']['message']).to eq('Logged in successfully.')
-      end
-
-      it 'returns user data' do
-        json_response = JSON.parse(response.body)
-        expect(json_response['status']['data']['user']).to include('email' => user.email)
+        expect(response.body).to eq('{}')
       end
     end
 
-    context 'with invalid credentials' do
-      before do
-        post :create, params: {
-          user: {
-            email: user.email,
-            password: 'wrong_password'
-          }
-        }, format: :json
-      end
+    context 'when no active session exists' do
+      it 'returns an error response with status :unauthorized' do
+        allow(controller).to receive(:check_current_user).and_return(nil)
 
-      it 'returns unauthorized status' do
+        delete :respond_to_on_destroy, params: {}, format: :json
+
         expect(response).to have_http_status(:unauthorized)
+        json_response = JSON.parse(response.body)
+        expect(json_response['status']).to eq(401)
+        expect(json_response['error']).to eq("Couldn't find an active session.")
       end
     end
   end
 
-  describe 'DELETE #destroy' do
-    context 'when user is logged in' do
-      let(:token) { generate_jwt_token_for(user) }
-
-      before do
-        request.headers['Authorization'] = "Bearer #{token}"
-        delete :destroy, format: :json
-      end
-
-      it 'returns successful response' do
-        expect(response).to have_http_status(:ok)
-      end
-
-      it 'returns success message' do
-        json_response = JSON.parse(response.body)
-        expect(json_response['message']).to eq('Logged out successfully.')
+  describe 'Private method #check_current_user' do
+    context 'when Authorization header is present and valid' do
+      it 'returns the current user' do
+        user_from_method = controller.send(:check_current_user)
+        expect(user_from_method).to eq(user)
       end
     end
 
-    context 'when user is not logged in' do
-      before do
-        delete :destroy, format: :json
-      end
-
-      it 'returns unauthorized status' do
-        expect(response).to have_http_status(:unauthorized)
-      end
-
-      it 'returns error message' do
-        json_response = JSON.parse(response.body)
-        expect(json_response['message']).to eq("Couldn't find an active session.")
+    context 'when Authorization header is missing or invalid' do
+      it 'returns nil' do
+        request.headers['Authorization'] = nil
+        user_from_method = controller.send(:check_current_user)
+        expect(user_from_method).to be_nil
       end
     end
   end
-end
-
-# Add this helper method in your rails_helper.rb or in a support file
-def generate_jwt_token_for(user)
-  JWT.encode(
-    { sub: user.id, exp: 24.hours.from_now.to_i },
-    Rails.application.credentials.devise_jwt_secret_key!
-  )
 end

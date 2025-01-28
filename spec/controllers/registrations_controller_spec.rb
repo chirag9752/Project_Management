@@ -2,10 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Users::RegistrationsController, type: :controller do
 
-  include Devise::Test::ControllerHelpers
-
   before do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
+    @request.env["devise.mapping"] = Devise.mappings[:user]  #When you override Devise's default controllers (e.g., RegistrationsController), you need to explicitly set the mapping so that Devise can handle the resource correctly.
   end
 
   describe 'POST #create' do
@@ -28,10 +26,9 @@ RSpec.describe Users::RegistrationsController, type: :controller do
 
       it 'returns successful response' do
         post :create, params: valid_params, format: :json
-        
+
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
-        expect(json_response['status']['message']).to eq('Signed up successfully.')
         expect(json_response['data']).to include('email' => valid_params[:user][:email])
       end
     end

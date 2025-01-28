@@ -7,12 +7,11 @@ RSpec.describe RemoveFeatureService do
   describe '#call' do
     context 'when user and feature are valid' do
       it 'removes the feature from the user successfully' do
-        user.features << feature # Assign the feature first
+        user.features << feature
         service = RemoveFeatureService.new(assign_feature: { user_id: user.id, feature_name: feature.feature_name })
         result = service.call
 
         expect(result[:success]).to eq(true)
-        expect(result[:message]).to eq('Feature removed successfully')
         expect(user.features).not_to include(feature)
       end
 

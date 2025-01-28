@@ -76,7 +76,7 @@ gem 'jsonapi-rails'
 gem 'byebug', group: [:development, :test]
 gem 'jsonapi-serializer'
 
-
+gem 'rubocop', '~> 1.69', '>= 1.69.2'
 
 group :test do
   gem 'rspec-rails', '~> 7.1'

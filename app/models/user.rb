@@ -13,7 +13,6 @@ class User < ApplicationRecord
   has_many :features, through: :user_features
   has_many :project_users
   has_many :projects, through: :project_users
-  # has_many :timesheets
 
   enum role: {
        HR: 0,
@@ -34,12 +33,11 @@ class User < ApplicationRecord
         id: self.id,
       })
     end
-
-    # def self.jwt_revoked?(payload, user)
-    #   user.jwt_revocation_token = payload['jti']
-    # end
-
-    # def self.revoke_jwt(payload, user)
-    #   user.update_column(:jwt_revocation_token, payload['jti'])
-    # end
 end
+
+
+
+
+
+
+

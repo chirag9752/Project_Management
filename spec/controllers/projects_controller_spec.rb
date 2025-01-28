@@ -1,17 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe ProjectsController, type: :controller do
-  # Setup user authentication
   let(:user) { create(:user) }
   let(:project) { create(:project) }
 
-  # Authenticate the user before running each test
   before do
     sign_in user
   end
 
   describe 'GET #index' do
-    let!(:projects) { create_list(:project, 2) } # Create 2 projects
+    let!(:projects) { create_list(:project, 2) }
 
     it 'returns a successful response' do
       get :index

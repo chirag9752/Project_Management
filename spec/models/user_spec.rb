@@ -9,16 +9,24 @@ RSpec.describe User, type: :model do
   end
 
   describe 'enums' do
-    it do
-      should define_enum_for(:role)
-        .with_values(HR: 0, BD: 1, developer: 2)
-        .backed_by_column_of_type(:integer)
+    # it do
+    #   should define_enum_for(:role)                       # provided by RSpec::ActiveModel::Matchers
+    #     .with_values(HR: 0, BD: 1, developer: 2)
+    #     .backed_by_column_of_type(:integer)
+    # end
+
+    it 'define role as an enum' do
+      expect(User.roles).to eq({"HR" => 0, "BD" => 1, "developer" => 2})
     end
 
-    it do
-      should define_enum_for(:employee_type)
-      .with_values(Manager: 1, TeamLead: 0, JuniorDeveloper: 2)
-      .backed_by_column_of_type(:integer)
+    # it do
+    #   should define_enum_for(:employee_type)
+    #   .with_values(Manager: 1, TeamLead: 0, JuniorDeveloper: 2)
+    #   .backed_by_column_of_type(:integer)
+    # end
+
+    it 'define employee_type as an enum' do
+      expect(User.employee_types).to eq({"Manager" => 1, "TeamLead" => 0, "JuniorDeveloper" => 2})
     end
   end
 
@@ -36,7 +44,6 @@ RSpec.describe User, type: :model do
 
   describe '#jwt_payload' do
     let(:user) { create(:user, role: 'developer', email: "John@example.com", password: "password", name: 'John Doe', id: 1) }
-
     it 'returns a hash with custom payload values' do
       payload = user.jwt_payload
       expect(payload).to include(

@@ -12,11 +12,8 @@ RSpec.describe ProfilesController, type: :controller do
 
       it 'returns all profiles successfully' do
         get :index
-
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
-        
-        expect(json_response['message']).to eq('Profile fetched successfully')
         expect(json_response['data'].length).to eq(2)
         expect(json_response['data'].map { |p| p['profile_name'] }).to include('Developer', 'Manager')
       end
@@ -32,8 +29,6 @@ RSpec.describe ProfilesController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
-        
-        expect(json_response['message']).to eq('Profile fetched successfully')
         expect(json_response['data']).to be_empty
       end
     end

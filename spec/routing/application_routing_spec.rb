@@ -1,8 +1,6 @@
-# spec/routing/application_routing_spec.rb
 require 'rails_helper'
 
 RSpec.describe 'Routing', type: :routing do
-  # Testing routes for users
   it 'routes /users to users#index' do
     expect(get: '/users').to route_to('users#index')
   end
@@ -16,8 +14,8 @@ RSpec.describe 'Routing', type: :routing do
   end
 
   # Testing timesheets route
-  it 'routes /timesheets/fetchsingletimesheet to timesheets#fetch_single' do
-    expect(post: '/timesheets/fetchsingletimesheet').to route_to('timesheets#fetch_single')
+  it 'routes /timesheets/fetchsingletimesheet to timesheets#fetch_single_timesheet' do
+    expect(post: '/timesheets/fetchsingletimesheet').to route_to('timesheets#fetch_single_timesheet')
   end
 
   # Testing projects routes

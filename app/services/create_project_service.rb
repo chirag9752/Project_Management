@@ -5,52 +5,71 @@ class CreateProjectService
 
   def call
     project_params = extract_project_params
-    if project_params
-      project = Project.new(project_params.except(:user_List))
-      user_List = project_params[:user_List]
-
-      if user_List.any?
-        user_emails = user_List.map { |user| user["email"] }
-        list_of_users = User.where(email: user_emails)
-
-        user_List_map = user_List.index_by { |user| user["email"] }
-        
-        if list_of_users.any?
-          list_of_users.each do |user|
-            timesheet = user_List_map[user.email]["timesheet"]
-            billing_access = user_List_map[user.email]["billing_access"]
-            profile_name = user_List_map[user.email]["profile_name"]
-            profile = Profile.find_by(profile_name: profile_name)
-              if profile
-                profile_id = profile.id
-              else
-                new_profile = Profile.create!(profile_name: profile_name)
-                profile_id = new_profile.id
-              end
-            project.project_users.build(user: user, timesheet: timesheet, billing_access: billing_access, profile_id: profile_id)
-          end
-          project.save!
-          if project.persisted?
-            { success: true, message: "Project created successfully", data: project }
-          else
-            { success: false, errors: project.errors.full_messages }
-          end
-        else
-          { success: false, errors: ["No valid user found for the given emails"] }
-        end
-      else
-        { success: false, errors: ["No user emails provided"] }
-      end
-    else
-      { success: false, errors: ["Invalid project parameters"] }
-    end
+    return error_response("Invalid project parameters") unless project_params
+  
+    project = build_project(project_params)  
+    return error_response("No user emails provided") unless project_params[:user_List].any?
+  
+    user_emails = extract_user_emails(project_params[:user_List])
+    list_of_users = find_users_by_emails(user_emails)
+    return error_response("No valid user found for the given emails") unless list_of_users.any?
+  
+    assign_project_users(project, list_of_users, project_params[:user_List])
+    save_project(project)
   end
-
+  
   private
-
+  
   def extract_project_params
     @params.require(:project).permit(:project_name, :billing_rate, user_List: [:email, :timesheet, :billing_access, :profile_name])
-      rescue ActionController::ParameterMissing => e
-        { success: false, errors: [e.message] }
+  rescue ActionController::ParameterMissing => e
+    { success: false, errors: [e.message] }
+  end
+  
+  def build_project(project_params)
+    Project.new(project_params.except(:user_List))
+  end
+  
+  def extract_user_emails(user_list)
+    user_list.map { |user| user["email"] }
+  end
+  
+  def find_users_by_emails(user_emails)
+    User.where(email: user_emails)
+  end
+  
+  def assign_project_users(project, users, user_list)
+    user_map = user_list.group_by { |user| user["email"] }
+  
+    users.each do |user|
+      user_data_list = user_map[user.email]
+  
+      user_data_list.each do |user_data|
+        profile_id = find_or_create_profile(user_data["profile_name"])
+        project.project_users.build(
+          user: user,
+          timesheet: user_data["timesheet"],
+          billing_access: user_data["billing_access"],
+          profile_id: profile_id
+        )
+      end
+    end
+  end
+  
+  def find_or_create_profile(profile_name)
+    profile = Profile.find_by(profile_name: profile_name)
+    profile ? profile.id : Profile.create!(profile_name: profile_name).id
+  end
+  
+  def save_project(project)
+    if project.save
+      { success: true, data: project }
+    else
+      { success: false, errors: project.errors.full_messages }
+    end
+  end
+  
+  def error_response(message)
+    { success: false, errors: message }
   end
 end

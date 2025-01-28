@@ -11,12 +11,11 @@ RSpec.describe AssignFeatureService do
         result = service.call
 
         expect(result[:success]).to eq(true)
-        expect(result[:message]).to eq('Feature assigned successfully')
         expect(user.features).to include(feature)
       end
 
       it 'returns an error if the feature is already assigned' do
-        user.features << feature # Assign the feature first
+        user.features << feature
         service = AssignFeatureService.new(assign_feature: { user_id: user.id, feature_name: feature.feature_name })
         result = service.call
 

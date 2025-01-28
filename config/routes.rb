@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
    devise_for :users,
-     path: '',    #root path
+     path: '',
      path_names: {
        sign_in: 'login',
        sign_out: 'logout',
@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     get '/users/details/:id', to: 'users#detailsshow'
 
     # timesheet
-    post '/timesheets/fetchsingletimesheet', to: 'timesheets#fetch_single'
+    post '/timesheets/fetchsingletimesheet', to: 'timesheets#fetch_single_timesheet'
 
     # post '/projects', to: 'projects#create'
     get '/projects', to: 'projects#index'

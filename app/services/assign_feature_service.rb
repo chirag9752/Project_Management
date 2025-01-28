@@ -11,7 +11,7 @@ class AssignFeatureService
         { success: false, errors: 'Feature already assigned' }
       else
         @user.features << @feature
-        { success: true, message: 'Feature assigned successfully' }
+        { success: true}
       end
     else
       { success: false, errors: 'Invalid user or feature' }

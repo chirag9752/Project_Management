@@ -15,10 +15,7 @@ class UsersController < ApplicationController
   end
 
   def detailsshow
-    @user = User.includes(:projects).find(params[:id]) # Includes projects to optimize query
-    render json: {
-      data: @user,
-      projects: @user.projects
-    }, status: :ok
+    @user = User.find(params[:id])
+    render json: { data: @user, projects: @user.projects.group('projects.id') }, status: :ok
   end
 end

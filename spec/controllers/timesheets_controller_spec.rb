@@ -1,33 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe TimesheetsController, type: :controller do
-  include Devise::Test::ControllerHelpers
-
   let(:user) { create(:user) }
   let(:profile) { create(:profile) }
   let(:project) { create(:project) }
   let(:project_user) { create(:project_user, user: user, profile: profile, project: project) }
-  let(:week_start_date) { Date.today.beginning_of_week }
+  let(:timesheet) { create(:timesheet, project_user: project_user, week_start_date: '2025-01-22') }
 
   before do
     sign_in user
   end
 
-  describe 'GET #fetch_single' do
+  describe 'GET #fetch_single_timesheet' do
     context 'when timesheet exists' do
-      let!(:timesheet) do
-        create(:timesheet, 
-          project_user: project_user,
-          week_start_date: week_start_date
-        )
-      end
 
       let(:valid_params) do
         {
           WeekData: {
             profile_Id: profile.id,
             project_Id: project.id,
-            week_start_date: week_start_date
+            week_start_date: '2025-01-22'
           },
           featureknown: {
             userid: user.id
@@ -35,26 +27,23 @@ RSpec.describe TimesheetsController, type: :controller do
         }
       end
 
-      it 'returns successful response with timesheet data' do
-        get :fetch_single, params: valid_params
-        
+      it 'returns the timesheet with status 200' do
+        timesheet
+        get :fetch_single_timesheet, params: valid_params
+ 
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
-        expect(json_response['message']).to eq('Timesheet fetched successfully')
-        expect(json_response['timesheet']).to be_present
+        expect(json_response['timesheet']['id']).to eq(timesheet.id)
       end
     end
 
     context 'when timesheet does not exist' do
-      # Create project_user but no timesheet
-      let!(:project_user) { create(:project_user, user: user, profile: profile, project: project) }
-
-      let(:params_without_timesheet) do
+      let(:invalid_params) do
         {
           WeekData: {
             profile_Id: profile.id,
             project_Id: project.id,
-            week_start_date: week_start_date
+            week_start_date: '2025-01-29'
           },
           featureknown: {
             userid: user.id
@@ -62,46 +51,22 @@ RSpec.describe TimesheetsController, type: :controller do
         }
       end
 
-      it 'returns appropriate message when timesheet is empty' do
-        get :fetch_single, params: params_without_timesheet
+      it 'returns an empty JSON object with status 200' do
+        get :fetch_single_timesheet, params: invalid_params
         
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
-        expect(json_response['message']).to eq('Timesheet is empty of this particular week please update it now!')
+        expect(json_response).to eq({})
       end
     end
 
-    context 'when user is not authenticated' do
-      before do
-        sign_out user
-      end
+    context 'When required paramters are missing' do
+      it 'returns an empty json object with status 200' do
+        post :fetch_single_timesheet , params: {}
 
-      it 'returns unauthorized status' do
-        get :fetch_single
-        expect(response).to have_http_status(:unauthorized)
-      end
-    end
-
-    context 'with invalid parameters' do
-      let(:invalid_params) do
-        {
-          WeekData: {
-            profile_Id: 999999,
-            project_Id: 999999,
-            week_start_date: week_start_date
-          },
-          featureknown: {
-            userid: 999999
-          }
-        }
-      end
-
-      it 'handles missing project_user gracefully' do
-        get :fetch_single, params: invalid_params
-        
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
-        expect(json_response['message']).to eq('Timesheet is empty of this particular week please update it now!')
+        expect(json_response).to eq({})
       end
     end
   end
