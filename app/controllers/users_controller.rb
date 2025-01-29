@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
- 
+
   # def update_role
   #   #  HR CAN update other users role need this code to be here
   # end
