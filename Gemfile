@@ -90,3 +90,5 @@ end
 
 
 gem 'stripe'
+
+gem "dotenv-rails", "~> 3.1"

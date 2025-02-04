@@ -41,10 +41,10 @@ class Hr::FeaturesController < ApplicationController
     if current_user && current_user.id == @user.id
       @feature_name = Feature.find_by(feature_name: params[:featureknown][:feature_name])
       unless FeatureAccessService.has_access?(@user, @feature_name)
-        render json: { error: 'Feature not enabled for this user' }, status: :forbidden
+        render json: { errors: 'Feature not enabled for this user' }, status: :forbidden
       end
     else
-      render json: {error: "You are not authorized to access this request"}, status: :forbidden
+      render json: {errors: "You are not authorized to access this request"}, status: :forbidden
     end
   end
 end
