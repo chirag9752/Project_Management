@@ -31,4 +31,9 @@ Rails.application.routes.draw do
 
     # profiles 
     get '/profiles', to: 'profiles#index' 
+
+    #checkout route
+    post 'checkout/create', to: 'checkout#create'
+    post '/checkout/webhooks/stripe', to: 'checkout#webhook_checkout_handle'
+    get '/api/stripe/session/:session_id', to: 'stripe_sessions#show'
 end

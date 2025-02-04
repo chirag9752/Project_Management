@@ -87,3 +87,8 @@ group :test do
   gem 'shoulda-context'
   gem 'database_cleaner-active_record'
 end
+
+
+gem 'stripe'
+
+gem "dotenv-rails", "~> 3.1"
