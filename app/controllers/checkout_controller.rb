@@ -1,6 +1,8 @@
 class CheckoutController < ApplicationController
 	skip_before_action :verify_authenticity_token
 
+  # sudo stripe listen --forward-to localhost:3000/checkout/webhooks/stripe           # run this for attaching stripe cli
+
 	def create
 		@session = Stripe::Checkout::Session.create({
 			payment_method_types: ['card'],
