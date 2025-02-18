@@ -11,10 +11,13 @@ Rails.application.routes.draw do
       registrations: 'users/registrations'
     },
     defaults: { format: :json } 
-
+    
+    #user
     get '/users', to: 'users#index'
     get '/users/:id', to: 'users#show'
     get '/users/details/:id', to: 'users#detailsshow'
+    post '/users/update/profile/:id', to: 'users#update'
+    # get '/users/image/:id', to: 'users#fetch_single_user_image'
 
     # timesheet
     post '/timesheets/fetchsingletimesheet', to: 'timesheets#fetch_single_timesheet'
@@ -24,7 +27,6 @@ Rails.application.routes.draw do
     get '/projects/:id', to: 'projects#show'
 
     # features
-
     post 'users/execute_feature', to: 'hr/features#execute'
     post 'users/checkinguserfeature', to: 'hr/features#checking_user_feature'
     get 'users/features/index', to: 'hr/features#index'
