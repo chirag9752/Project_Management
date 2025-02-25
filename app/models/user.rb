@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :features, through: :user_features
   has_many :project_users
   has_many :projects, through: :project_users
+  has_one_attached :profile_photo
 
   enum role: {
        HR: 0,

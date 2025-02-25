@@ -8,6 +8,22 @@ class TimesheetsController < ApplicationController
 		render json: { timesheet: timesheet }, status: :ok
 	end
 
+  def fetch_custom_date_pdf
+    pdf_data = CustomDatePdfService.new(params).generate_pdf
+    if pdf_data.nil?
+      render json: { error: "No timesheets found for the given criteria" }, status: :not_found
+    else
+      send_data pdf_data, filename: "timesheet_report.pdf", type: "application/pdf", disposition: "attachment"  # send_data ensures the response is a downloadable PDF file.
+    end
+  end
+
+  def fetch_custom_date_csv
+    csv_data = CustomDatePdfService.new(params).generate_csv
+    return head :no_content if csv_data.nil?
+
+    send_data csv_data, filename: "timesheets.csv", type: "text/csv"
+  end
+
 	private
 
 	def fetch_timesheet_data

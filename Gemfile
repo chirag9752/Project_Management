@@ -92,3 +92,10 @@ end
 gem 'stripe'
 
 gem "dotenv-rails", "~> 3.1"
+
+
+gem 'image_processing', '~> 1.12', '>= 1.12.2'
+gem 'mini_magick', '~> 4.5', '>= 4.5.1'
+gem 'prawn'
+gem 'prawn-table'
+gem 'csv', '~> 3.0'
