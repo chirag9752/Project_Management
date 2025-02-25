@@ -93,6 +93,7 @@ gem 'stripe'
 
 gem "dotenv-rails", "~> 3.1"
 
+gem 'sidekiq'
 
 gem 'image_processing', '~> 1.12', '>= 1.12.2'
 gem 'mini_magick', '~> 4.5', '>= 4.5.1'

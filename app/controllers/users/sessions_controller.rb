@@ -4,7 +4,12 @@ class Users::SessionsController < Devise::SessionsController
   respond_to :json
 
   def respond_with(current_user, _opts = {})
-  token = request.env['warden-jwt_auth.token']
+    token = request.env['warden-jwt_auth.token']
+    email = params[:user][:email]
+    user = User.find_by(email: email)
+    if user
+      UserMailer.welcome_email(user).deliver_later
+    end
     render json: {token: token, data: { user: UserSerializer.new(current_user).serializable_hash[:data][:attributes] } }, status: :ok
   end
 
